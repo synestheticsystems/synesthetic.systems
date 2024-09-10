@@ -53,7 +53,7 @@ function App() {
 
       // Clear the svg
       svg.innerHTML = '';
-      tesselateTriangle(svg, centerOfScreen, radius, 10, '#222222', '#2222FF', rotation, -2, 0);
+      tesselateTriangle(svg, centerOfScreen, radius, 10, '#222222', '#2222FF', rotation, -2, 1);
       animationFrameId = requestAnimationFrame(animate);
     });
     return () => cancelAnimationFrame(animationFrameId);
@@ -64,7 +64,7 @@ function App() {
       <svg ref={ref} style={{ zIndex: 1, position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: '#141414' }}></svg>
       <Container>
         <Title>Synesthetic Systems</Title>
-        <Subtitle>All surfaces are imaginary</Subtitle>
+        <Subtitle>Taste the future</Subtitle>
       </Container>
     </>
   )
