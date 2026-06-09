@@ -16,35 +16,25 @@
     #0a0a0c;
 }
 
-.hero {
-  position: relative;
+.site-header {
+  position: fixed;
+  top: 0;
+  left: 0;
   z-index: 1;
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: clamp(1.25rem, 4vw, 2rem);
-  /* the canvas listens on window, so never let the overlay swallow the pointer */
+  padding: clamp(0.9rem, 2.5vw, 1.5rem) clamp(1.1rem, 3vw, 2rem);
+  /* the canvas listens on window, so never let the header swallow the pointer */
   pointer-events: none;
 }
 
-.hero-inner {
-  /* soft local darkening keeps the wordmark legible over the bright tiling */
-  padding: clamp(1.5rem, 4vw, 2.5rem) clamp(1.5rem, 6vw, 3rem);
-  border-radius: 24px;
-  background: radial-gradient(
-    120% 120% at 50% 50%,
-    rgba(8, 8, 12, 0.55),
-    rgba(8, 8, 12, 0) 72%
-  );
-}
-
-.hero-title {
+.logo {
   margin: 0;
   font-weight: 700;
-  font-size: clamp(2rem, 8vw, 6rem);
-  letter-spacing: -0.03em;
-  line-height: 1.04;
-  text-shadow: 0 2px 30px rgba(0, 0, 0, 0.55);
+  font-size: clamp(1.05rem, 1.5vw, 1.35rem);
+  letter-spacing: -0.01em;
+  line-height: 1;
+  color: #f4f4f6;
+  /* tight shadow for crispness + soft halo for legibility over the field */
+  text-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.55),
+    0 2px 18px rgba(0, 0, 0, 0.6);
 }

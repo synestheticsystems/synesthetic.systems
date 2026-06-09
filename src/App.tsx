@@ -9,11 +9,9 @@ function App() {
       <ErrorBoundary fallback={<div className="lizard-canvas lizard-unsupported" aria-hidden="true" />}>
         <LizardField />
       </ErrorBoundary>
-      <main className="hero">
-        <div className="hero-inner">
-          <DistortTitle className="hero-title" text="Synesthetic Systems" />
-        </div>
-      </main>
+      <header className="site-header">
+        <DistortTitle className="logo" text="Synesthetic Systems" />
+      </header>
     </>
   );
 }
