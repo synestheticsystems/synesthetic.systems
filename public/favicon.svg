@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Synesthetic Systems">
+  <defs>
+    <linearGradient id="ss" x1="8" y1="6" x2="56" y2="58" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#2f6fd6"/>
+      <stop offset="0.5" stop-color="#15807a"/>
+      <stop offset="1" stop-color="#1f9a3f"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="#0a0a0c"/>
+  <path d="M32 9 L52.8 21 L52.8 43 L32 55 L11.2 43 L11.2 21 Z" fill="url(#ss)"/>
+</svg>

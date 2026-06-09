@@ -23,9 +23,7 @@ export type TileGeometry = {
   indices: Uint16Array; // centroid-fan triangulation (shared by both shapes)
   vertexCount: number;
   indexCount: number;
-  ringCount: number; // number of boundary vertices (for line-loop outlines)
   hexR: number; // hexagon circumradius (= edge length), world px
-  eye: Float32Array; // [x,y] eye position in local space
   boundingRadius: number;
 };
 
@@ -177,13 +175,6 @@ export function deformRing(hexR: number, features: Features, out: Float32Array):
   }
 }
 
-// Eye position (on the head, pulled toward the body) for the given features.
-export function eyePos(hexR: number, features: Features): [number, number] {
-  const verts = hexVerts(hexR);
-  const h = freeEdgePoint(hexR, verts, features, 0, 0.2, true);
-  return [h[0] * 0.72, h[1] * 0.72];
-}
-
 export function buildTile(hexR: number): TileGeometry {
   const R = hexR;
   const verts = hexVerts(R);
@@ -211,16 +202,13 @@ export function buildTile(hexR: number): TileGeometry {
     indices[i * 3 + 2] = 1 + ((i + 1) % ringCount);
   }
 
-  const e = eyePos(R, BASE_FEATURES);
   return {
     triPositions,
     lizPositions,
     indices,
     vertexCount,
     indexCount: indices.length,
-    ringCount,
     hexR: R,
-    eye: new Float32Array([e[0], e[1]]),
     boundingRadius: R * 1.35,
   };
 }

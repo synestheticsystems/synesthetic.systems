@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { Fragment, useEffect, useRef } from 'react';
 
 type Props = { text: string; className?: string };
 
@@ -14,6 +14,7 @@ export default function DistortTitle({ text, className }: Props) {
     if (!el) return;
     const spans = Array.from(el.querySelectorAll<HTMLSpanElement>('[data-letter]'));
     if (spans.length === 0) return;
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     const centers = spans.map(() => ({ x: 0, y: 0 }));
     const state = spans.map(() => ({ env: 0, sk: 0, px: 0, py: 0 }));
@@ -61,8 +62,9 @@ export default function DistortTitle({ text, className }: Props) {
         // live, organic quiver (incommensurate sines, per-letter phase) so the
         // letters tremble rather than bounce — uneasy, not playful
         const ph = i * 1.7;
-        const wx = (Math.sin(time * 3.4 + ph) + 0.6 * Math.sin(time * 5.3 + ph * 1.7)) * 0.9 * st.env;
-        const wy = (Math.cos(time * 4.1 + ph * 1.3) + 0.6 * Math.sin(time * 6.2 + ph * 0.7)) * 0.9 * st.env;
+        const qAmp = reduceMotion ? 0 : 0.9; // gate the live quiver for reduced-motion
+        const wx = (Math.sin(time * 3.4 + ph) + 0.6 * Math.sin(time * 5.3 + ph * 1.7)) * qAmp * st.env;
+        const wy = (Math.cos(time * 4.1 + ph * 1.3) + 0.6 * Math.sin(time * 6.2 + ph * 0.7)) * qAmp * st.env;
         // non-uniform stretch (taller + narrower) reads as distortion, not a pop
         const sx = 1 - st.env * 0.13;
         const sy = 1 + st.env * 0.32;
@@ -81,17 +83,27 @@ export default function DistortTitle({ text, className }: Props) {
     };
   }, [text]);
 
+  // Group letters by word so a word never breaks mid-way; only the spaces
+  // between words are line-break opportunities.
+  const words = text.split(' ');
   return (
     <h1 className={className} ref={ref} aria-label={text}>
-      {Array.from(text).map((ch, i) => (
-        <span
-          data-letter
-          aria-hidden="true"
-          key={i}
-          style={{ display: 'inline-block', whiteSpace: 'pre', willChange: 'transform' }}
-        >
-          {ch}
-        </span>
+      {words.map((word, wi) => (
+        <Fragment key={wi}>
+          <span style={{ display: 'inline-block', whiteSpace: 'nowrap' }}>
+            {Array.from(word).map((ch, ci) => (
+              <span
+                data-letter
+                aria-hidden="true"
+                key={ci}
+                style={{ display: 'inline-block', willChange: 'transform' }}
+              >
+                {ch}
+              </span>
+            ))}
+          </span>
+          {wi < words.length - 1 ? ' ' : null}
+        </Fragment>
       ))}
     </h1>
   );

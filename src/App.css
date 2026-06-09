@@ -11,8 +11,8 @@
 /* Fallback if WebGL2 is unavailable: a calm static gradient, never a blank page. */
 .lizard-unsupported {
   background:
-    radial-gradient(60% 60% at 30% 30%, rgba(10, 148, 153, 0.25), transparent 70%),
-    radial-gradient(50% 50% at 75% 65%, rgba(189, 28, 128, 0.22), transparent 70%),
+    radial-gradient(60% 60% at 30% 28%, rgba(26, 87, 176, 0.3), transparent 70%),
+    radial-gradient(55% 55% at 72% 70%, rgba(31, 138, 60, 0.26), transparent 70%),
     #0a0a0c;
 }
 
@@ -24,14 +24,14 @@
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 2rem;
+  padding: clamp(1.25rem, 4vw, 2rem);
   /* the canvas listens on window, so never let the overlay swallow the pointer */
   pointer-events: none;
 }
 
 .hero-inner {
   /* soft local darkening keeps the wordmark legible over the bright tiling */
-  padding: 2.5rem 3rem;
+  padding: clamp(1.5rem, 4vw, 2.5rem) clamp(1.5rem, 6vw, 3rem);
   border-radius: 24px;
   background: radial-gradient(
     120% 120% at 50% 50%,
@@ -43,18 +43,8 @@
 .hero-title {
   margin: 0;
   font-weight: 700;
-  font-size: clamp(2.6rem, 8vw, 6rem);
+  font-size: clamp(2rem, 8vw, 6rem);
   letter-spacing: -0.03em;
-  line-height: 1.02;
+  line-height: 1.04;
   text-shadow: 0 2px 30px rgba(0, 0, 0, 0.55);
-}
-
-.hero-tagline {
-  margin: 1rem 0 0;
-  font-family: 'Source Code Pro', ui-monospace, monospace;
-  font-size: clamp(0.95rem, 2.2vw, 1.35rem);
-  letter-spacing: 0.34em;
-  text-transform: uppercase;
-  color: rgba(244, 244, 246, 0.82);
-  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.5);
 }

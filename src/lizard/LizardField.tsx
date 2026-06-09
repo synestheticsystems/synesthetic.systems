@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { BASE_FEATURES, buildInstances, buildTile, deformRing, type Features } from './geometry';
-import { FRAGMENT_SRC, LINE_FRAGMENT_SRC, LINE_VERTEX_SRC, VERTEX_SRC } from './shaders';
+import { FRAGMENT_SRC, VERTEX_SRC } from './shaders';
 
 // World-space tuning (px).
 const HEX_R = 100; // hexagon circumradius (= edge length)
@@ -10,11 +10,6 @@ const GLOBAL_MORPH_BASE = 0.9; // floor of the breathing wave (solid lizards at 
 const CURV_BOOST = 1.1; // near the cursor, multiply curvature by up to 1 + this
 const RADIAL_AMP = 5; // px amplitude of the subtle field-wide radial ripple
 const MAX_DPR = 2;
-
-// Stationary line-art test: freeze all motion and draw only dark ink outlines on
-// a cream ground, so the bare silhouette can be judged on its own. Flip to true
-// to restore that debug view.
-const STATIONARY = false;
 
 function compile(gl: WebGL2RenderingContext, type: number, src: string): WebGLShader {
   const sh = gl.createShader(type)!;
@@ -91,21 +86,13 @@ export default function LizardField() {
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     let program: WebGLProgram;
-    let lineProgram: WebGLProgram;
     try {
       program = link(gl, VERTEX_SRC, FRAGMENT_SRC);
-      lineProgram = link(gl, LINE_VERTEX_SRC, LINE_FRAGMENT_SRC);
     } catch (e) {
       console.error('Lizard field shader setup failed; using static fallback.', e);
       canvas.classList.add('lizard-unsupported');
       return;
     }
-    const lineU = {
-      resolution: gl.getUniformLocation(lineProgram, 'uResolution'),
-      viewScale: gl.getUniformLocation(lineProgram, 'uViewScale'),
-      viewOffset: gl.getUniformLocation(lineProgram, 'uViewOffset'),
-      ink: gl.getUniformLocation(lineProgram, 'uInk'),
-    };
     const u = {
       resolution: gl.getUniformLocation(program, 'uResolution'),
       mouseWorld: gl.getUniformLocation(program, 'uMouseWorld'),
@@ -206,7 +193,6 @@ export default function LizardField() {
       canvas.height = h;
       gl.viewport(0, 0, w, h);
       rebuildInstances();
-      if (STATIONARY) renderStatic();
     }
 
     // --- pointer state (CSS px relative to canvas; scaled to buffer px later) ---
@@ -229,11 +215,9 @@ export default function LizardField() {
       targetActive = 0;
     }
 
-    if (!STATIONARY) {
-      window.addEventListener('pointermove', onPointerMove, { passive: true });
-      window.addEventListener('pointerdown', onPointerMove, { passive: true });
-      canvas.addEventListener('pointerleave', onPointerLeave);
-    }
+    window.addEventListener('pointermove', onPointerMove, { passive: true });
+    window.addEventListener('pointerdown', onPointerMove, { passive: true });
+    canvas.addEventListener('pointerleave', onPointerLeave);
 
     const ro = new ResizeObserver(resize);
     ro.observe(canvas);
@@ -247,20 +231,6 @@ export default function LizardField() {
     gl.uniform1f(u.curvBoost, CURV_BOOST);
     gl.uniform1f(u.radialAmp, RADIAL_AMP);
     gl.uniform1f(u.hexR, tile.hexR);
-
-    // Stationary line-art render: cream ground, dark ink outline of every tile,
-    // full-lizard shape, no morph or motion.
-    function renderStatic() {
-      gl.clearColor(0.96, 0.94, 0.87, 1.0);
-      gl.clear(gl.COLOR_BUFFER_BIT);
-      gl.useProgram(lineProgram);
-      gl.bindVertexArray(vao);
-      gl.uniform2f(lineU.resolution, bufferW, bufferH);
-      gl.uniform1f(lineU.viewScale, 1.0);
-      gl.uniform2f(lineU.viewOffset, bufferW / 2, bufferH / 2);
-      gl.uniform3f(lineU.ink, 0.1, 0.08, 0.07);
-      gl.drawArraysInstanced(gl.LINE_LOOP, 1, tile.ringCount, instanceCount);
-    }
 
     let raf = 0;
     let prevNow = 0;
@@ -357,10 +327,8 @@ export default function LizardField() {
       if (document.hidden) stop();
       else start();
     }
-    if (!STATIONARY) {
-      document.addEventListener('visibilitychange', onVisibility);
-      start();
-    }
+    document.addEventListener('visibilitychange', onVisibility);
+    start();
 
     return () => {
       stop();
@@ -377,7 +345,6 @@ export default function LizardField() {
       gl.deleteBuffer(colorBuf);
       gl.deleteVertexArray(vao);
       gl.deleteProgram(program);
-      gl.deleteProgram(lineProgram);
     };
   }, []);
 

@@ -80,39 +80,6 @@ void main() {
 }
 `;
 
-// Minimal program for the stationary line-art test: draws each tile's boundary
-// (full-lizard positions) as a dark ink outline on a cream ground, no morph,
-// no motion — purely to judge whether a recognizable lizard falls out.
-export const LINE_VERTEX_SRC = /* glsl */ `#version 300 es
-precision highp float;
-
-layout(location = 1) in vec2 aLizPos;
-layout(location = 2) in vec2 aInstCenter;
-layout(location = 3) in float aInstRot;
-
-uniform vec2  uResolution;
-uniform float uViewScale;
-uniform vec2  uViewOffset;
-
-void main() {
-  float c = cos(aInstRot);
-  float s = sin(aInstRot);
-  vec2 r = vec2(aLizPos.x * c - aLizPos.y * s, aLizPos.x * s + aLizPos.y * c);
-  vec2 world = aInstCenter + r;
-  vec2 screen = world * uViewScale + uViewOffset;
-  vec2 clip = (screen / uResolution) * 2.0 - 1.0;
-  clip.y = -clip.y;
-  gl_Position = vec4(clip, 0.0, 1.0);
-}
-`;
-
-export const LINE_FRAGMENT_SRC = /* glsl */ `#version 300 es
-precision highp float;
-uniform vec3 uInk;
-out vec4 fragColor;
-void main() { fragColor = vec4(uInk, 1.0); }
-`;
-
 export const FRAGMENT_SRC = /* glsl */ `#version 300 es
 precision highp float;
 
@@ -125,8 +92,6 @@ uniform float uHexR; // hexagon circumradius
 uniform float uTime;
 
 out vec4 fragColor;
-
-const float DEG = 0.01745329252;
 
 // Cool ramp: deep blue -> azure -> teal -> forest green -> deep moss. Sampled by
 // world position + time so the field reads as one flowing wash, not flat solids.
@@ -142,13 +107,6 @@ vec3 ramp(float s) {
   if (x < 2.0) return mix(c1, c2, x - 1.0);
   if (x < 3.0) return mix(c2, c3, x - 2.0);
   return mix(c3, c4, x - 3.0);
-}
-
-// distance from point p to segment ab
-float segDist(vec2 p, vec2 a, vec2 b) {
-  vec2 ab = b - a;
-  float h = clamp(dot(p - a, ab) / max(dot(ab, ab), 1e-4), 0.0, 1.0);
-  return length(p - a - ab * h);
 }
 
 void main() {
