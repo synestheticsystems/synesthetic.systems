@@ -1,42 +1,60 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+.lizard-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  display: block;
+  z-index: 0;
+  background: #0a0a0c;
+}
+
+/* Fallback if WebGL2 is unavailable: a calm static gradient, never a blank page. */
+.lizard-unsupported {
+  background:
+    radial-gradient(60% 60% at 30% 30%, rgba(10, 148, 153, 0.25), transparent 70%),
+    radial-gradient(50% 50% at 75% 65%, rgba(189, 28, 128, 0.22), transparent 70%),
+    #0a0a0c;
+}
+
+.hero {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
+  padding: 2rem;
+  /* the canvas listens on window, so never let the overlay swallow the pointer */
+  pointer-events: none;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.hero-inner {
+  /* soft local darkening keeps the wordmark legible over the bright tiling */
+  padding: 2.5rem 3rem;
+  border-radius: 24px;
+  background: radial-gradient(
+    120% 120% at 50% 50%,
+    rgba(8, 8, 12, 0.55),
+    rgba(8, 8, 12, 0) 72%
+  );
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.hero-title {
+  margin: 0;
+  font-weight: 700;
+  font-size: clamp(2.6rem, 8vw, 6rem);
+  letter-spacing: -0.03em;
+  line-height: 1.02;
+  text-shadow: 0 2px 30px rgba(0, 0, 0, 0.55);
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
+.hero-tagline {
+  margin: 1rem 0 0;
+  font-family: 'Source Code Pro', ui-monospace, monospace;
+  font-size: clamp(0.95rem, 2.2vw, 1.35rem);
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: rgba(244, 244, 246, 0.82);
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.5);
 }
